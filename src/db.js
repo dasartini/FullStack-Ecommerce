@@ -16,10 +16,4 @@ export const pool = new pg.Pool({
   post:PORT,
 });
 
-// export const pool = new pg.Pool({
-//   user : "adrian",
-//   host : "localhost",
-//   password : "filete23olimar",
-//   database : "cafe_colombia",
-//   post:"3000"
-// })
+
