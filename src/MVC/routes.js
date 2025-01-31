@@ -19,6 +19,8 @@ router.put("/:productid/update", updateProduct)
 
 router.get("/orders/:id", getOrderByID)
 router.post("/orders" , createOrder)
+
+
 router.get("/categories", getCategories)
 router.post("/categories", createCategory )
 
