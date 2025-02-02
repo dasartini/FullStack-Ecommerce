@@ -5,6 +5,7 @@ CREATE TABLE Products (
   description TEXT,
   price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
   stock INT NOT NULL CHECK (stock >= 0),
+  image_url TEXT,
   category_id INT NOT NULL,
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Categories (id) ON DELETE CASCADE
 );

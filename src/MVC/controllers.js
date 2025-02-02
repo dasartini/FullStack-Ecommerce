@@ -51,14 +51,25 @@ export const createUser =   async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   };
-
+  export const getProductByID = async (req, res) => {
+    const productId = req.params.id;
+    try {
+      const product = await pool.query('SELECT name, description, price, image_url FROM Products WHERE id = $1', [productId]);
+      if (product.rows.length === 0) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+      res.json(product.rows[0]);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
   export const createProduct = async (req, res) => {
-    const { name, description, price, stock, category_id } = req.body;
+    const { name, description, price, stock, image_url, category_id } = req.body;
     try {
       const newProduct = await pool.query(
-        `INSERT INTO Products (name, description, price, stock, category_id) 
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [name, description, price, stock, category_id]
+        `INSERT INTO Products (name, description, price, stock, image_url, category_id) 
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [name, description, price, stock, image_url, category_id]
       );
       res.status(201).json(newProduct.rows[0]);
     } catch (err) {
@@ -76,7 +87,6 @@ export const createUser =   async (req, res) => {
     }
   
     try {
-      // Update stock by increasing the current value
       const updatedProduct = await pool.query(
         'UPDATE Products SET stock = stock + $1 WHERE id = $2 RETURNING *',
         [additionalStock, productId]
@@ -97,7 +107,6 @@ export const updateProduct = async (req, res) => {
   const { newStock, newPrice } = req.body;
 
   try {
-    // Validate stock and price inputs
     if (newStock < 0 || newPrice < 0) {
       return res.status(400).json({ error: 'Stock and price must be non-negative values' });
     }
@@ -158,7 +167,6 @@ export const createOrder =  async (req, res) => {
   const { user_id, items } = req.body;
 
   try {
-    // Calculate total price
     let totalPrice = 0;
     for (let item of items) {
       const product = await pool.query(
@@ -168,7 +176,6 @@ export const createOrder =  async (req, res) => {
       totalPrice += product.rows[0].price * item.quantity;
     }
 
-    // Insert order
     const newOrder = await pool.query(
       `INSERT INTO Orders (user_id, total_price) 
        VALUES ($1, $2) RETURNING *`,
@@ -177,7 +184,6 @@ export const createOrder =  async (req, res) => {
 
     const orderId = newOrder.rows[0].id;
 
-    // Insert order items
     for (let item of items) {
       await pool.query(
         `INSERT INTO Order_Items (order_id, product_id, quantity, price) 
@@ -193,7 +199,57 @@ export const createOrder =  async (req, res) => {
 };
 
 
-//Category
+export const makeCheckout = async (req, res) => {
+  const { items, total_price } = req.body;
+
+  if (!items || items.length === 0) {
+    return res.status(400).json({ error: "Cart is empty" });
+  }
+
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const orderResult = await client.query(
+      "INSERT INTO Orders (total_price) VALUES ($1) RETURNING id",
+      [total_price]
+    );
+    const orderId = orderResult.rows[0].id;
+
+    for (const item of items) {
+      const { product_id, quantity, price } = item;
+
+      await client.query(
+        "INSERT INTO Order_Items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
+        [orderId, product_id, quantity, price]
+      );
+
+      const stockUpdate = await client.query(
+        "UPDATE Products SET stock = stock - $1 WHERE id = $2 AND stock >= $1 RETURNING stock",
+        [quantity, product_id]
+      );
+
+      if (stockUpdate.rowCount === 0) {
+        throw new Error(
+          `Insufficient stock for product with ID ${product_id}`
+        );
+      }
+    }
+
+    await client.query("COMMIT");
+
+    res.status(200).json({ message: "Order placed successfully", orderId });
+  } catch (err) {
+    await client.query("ROLLBACK"); 
+    console.error(err);
+    res.status(500).json({ error: "Failed to place order" });
+  } finally {
+    client.release();
+  }
+}
+
+//Categories
 
 export const getCategories = async (req, res) => {
     try {
