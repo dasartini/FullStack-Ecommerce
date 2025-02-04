@@ -24,6 +24,10 @@ CREATE TABLE Orders (
   id SERIAL PRIMARY KEY,
   total_price DECIMAL(10, 2) NOT NULL CHECK (total_price >= 0),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  payment_status VARCHAR(20) DEFAULT 'Pending', 
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  customer_name VARCHAR(100),
+transaction_id VARCHAR(255);
 );
 
 -- Order_Items Table

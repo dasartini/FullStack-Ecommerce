@@ -89,3 +89,17 @@ export const updateProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const getStockLevels = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, stock FROM Products ORDER BY stock ASC"
+    );
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch product stock levels" });
+  }
+}
+
+
