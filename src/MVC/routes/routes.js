@@ -1,11 +1,8 @@
 import { Router } from "express";
-import { createUser, getUsers, getUserByID,
-     getAllProducts, createProduct , 
-    createOrder, getOrderByID,
-     getCategories, createCategory,
-     addProductStock, getProductByID,
-     makeCheckout,
-     updateProduct} from "./controllers.js";
+import { getUserByID, getUsers, createUser} from "../contollers/users.controllers.js"
+import {getAllProducts,getProductByID, createProduct, addProductStock, updateProduct} from "../contollers/products.controllers.js"
+import {getOrderByID, createOrder, makeCheckout} from "../contollers/orders.controllers.js"
+import {getCategories, createCategory} from "../contollers/categories.controllers.js"
 
 const router = Router()
 
