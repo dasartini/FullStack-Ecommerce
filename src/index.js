@@ -1,7 +1,7 @@
 console.log("Starting....")
 import  {PORT}  from "./config.js"
 import express from "express"
-import userRoutes from "./MVC/routes.js"
+import userRoutes from "./MVC/routes/routes.js"
 import morgan from "morgan"
 
 const app = express()

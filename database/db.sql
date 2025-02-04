@@ -24,6 +24,10 @@ CREATE TABLE Orders (
   id SERIAL PRIMARY KEY,
   total_price DECIMAL(10, 2) NOT NULL CHECK (total_price >= 0),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  payment_status VARCHAR(20) DEFAULT 'Pending', 
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  customer_name VARCHAR(100),
+transaction_id VARCHAR(255);
 );
 
 -- Order_Items Table
@@ -40,4 +44,15 @@ CREATE TABLE Order_Items (
 CREATE TABLE Categories (
   id SERIAL PRIMARY KEY,
   category_name VARCHAR(255) NOT NULL UNIQUE
+);
+-- Sales Table
+CREATE TABLE Sales (
+  sale_id SERIAL PRIMARY KEY,   
+  product_id INT NOT NULL,          
+  quantity INT NOT NULL,           
+  sale_date TIMESTAMP DEFAULT NOW(), 
+  total_price DECIMAL(10, 2) NOT NULL,
+  customer_id INT DEFAULT NULL,     
+  payment_status VARCHAR(20) DEFAULT 'Pending', 
+  FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE CASCADE
 );
