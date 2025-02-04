@@ -54,7 +54,7 @@ export const createUser =   async (req, res) => {
   export const getProductByID = async (req, res) => {
     const productId = req.params.id;
     try {
-      const product = await pool.query('SELECT name, description, price, image_url FROM Products WHERE id = $1', [productId]);
+      const product = await pool.query('SELECT id, name, description, price, stock, image_url, category_id FROM Products WHERE id = $1', [productId]);
       if (product.rows.length === 0) {
         return res.status(404).json({ error: 'Product not found' });
       }
