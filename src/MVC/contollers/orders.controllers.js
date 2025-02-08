@@ -1,10 +1,13 @@
 import { pool } from "../../db.js";
 
 export const getOrders = async (req, res) => {
-    res.send("obtainning orders")
-    const { rows } = await pool.query("SELECT * FROM Orders")
-    console.log(rows)
-    return rows
+  try {
+    const users = await pool.query('SELECT * FROM Orders');
+    res.json(users.rows);
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: err.message });
+  }
 }
 
 export const getOrderByID =  async (req, res) => {
@@ -38,40 +41,40 @@ export const getOrderByID =  async (req, res) => {
   }
 };
 
-export const createOrder =  async (req, res) => {
-  const { user_id, items } = req.body;
+// export const createOrder =  async (req, res) => {
+//   const { user_id, items } = req.body;
 
-  try {
-    let totalPrice = 0;
-    for (let item of items) {
-      const product = await pool.query(
-        'SELECT price FROM Products WHERE id = $1',
-        [item.product_id]
-      );
-      totalPrice += product.rows[0].price * item.quantity;
-    }
+//   try {
+//     let totalPrice = 0;
+//     for (let item of items) {
+//       const product = await pool.query(
+//         'SELECT price FROM Products WHERE id = $1',
+//         [item.product_id]
+//       );
+//       totalPrice += product.rows[0].price * item.quantity;
+//     }
 
-    const newOrder = await pool.query(
-      `INSERT INTO Orders (user_id, total_price) 
-       VALUES ($1, $2) RETURNING *`,
-      [user_id, totalPrice]
-    );
+//     const newOrder = await pool.query(
+//       `INSERT INTO Orders (user_id, total_price) 
+//        VALUES ($1, $2) RETURNING *`,
+//       [user_id, totalPrice]
+//     );
 
-    const orderId = newOrder.rows[0].id;
+//     const orderId = newOrder.rows[0].id;
 
-    for (let item of items) {
-      await pool.query(
-        `INSERT INTO Order_Items (order_id, product_id, quantity, price) 
-         VALUES ($1, $2, $3, $4)`,
-        [orderId, item.product_id, item.quantity, item.price]
-      );
-    }
+//     for (let item of items) {
+//       await pool.query(
+//         `INSERT INTO Order_Items (order_id, product_id, quantity, price) 
+//          VALUES ($1, $2, $3, $4)`,
+//         [orderId, item.product_id, item.quantity, item.price]
+//       );
+//     }
 
-    res.status(201).json({ orderId, totalPrice });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+//     res.status(201).json({ orderId, totalPrice });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 
 
 export const makeCheckout = async (req, res) => {
@@ -95,18 +98,18 @@ export const makeCheckout = async (req, res) => {
     const orderId = orderResult.rows[0].id;
 
     for (const item of items) {
-      const { product_id, quantity, price } = item;
+      const { id, quantity, price } = item;
 
       // Insert into Order_Items
       await client.query(
         "INSERT INTO Order_Items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
-        [orderId, product_id, quantity, price]
+        [orderId, id, quantity, price]
       );
 
       // Update stock
       const stockUpdate = await client.query(
         "UPDATE Products SET stock = stock - $1 WHERE id = $2 AND stock >= $1 RETURNING stock",
-        [quantity, product_id]
+        [quantity, id]
       );
 
       if (stockUpdate.rowCount === 0) {

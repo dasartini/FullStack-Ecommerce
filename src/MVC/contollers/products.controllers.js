@@ -1,6 +1,7 @@
 import { pool } from "../../db.js"
 
 export const getAllProducts = async (req, res) => {
+
     try {
       const products = await pool.query(
         `SELECT Products.*, Categories.category_name 
@@ -13,7 +14,9 @@ export const getAllProducts = async (req, res) => {
     }
   };
   export const getProductByID = async (req, res) => {
-    const productId = req.params.id;
+
+  
+    const productId = req.params.productid;
     try {
       const product = await pool.query('SELECT id, name, description, price, stock, image_url, category_id FROM Products WHERE id = $1', [productId]);
       if (product.rows.length === 0) {
@@ -21,6 +24,7 @@ export const getAllProducts = async (req, res) => {
       }
       res.json(product.rows[0]);
     } catch (err) {
+      console.log()
       res.status(500).json({ error: err.message });
     }
   };

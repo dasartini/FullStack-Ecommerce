@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getUserByID, getUsers, createUser} from "../contollers/users.controllers.js"
 import {getAllProducts,getProductByID, createProduct, addProductStock, updateProduct, getStockLevels, } from "../contollers/products.controllers.js"
-import {getOrderByID, createOrder, makeCheckout, getCompletedOrders, getSalesSummaryByProduct, getRevenueByDate, getTopSellingProducts} from "../contollers/orders.controllers.js"
+import {getOrderByID, makeCheckout, getCompletedOrders, getSalesSummaryByProduct, getRevenueByDate, getTopSellingProducts, getOrders} from "../contollers/orders.controllers.js"
 import {getCategories, createCategory} from "../contollers/categories.controllers.js"
 
 const router = Router()
@@ -11,14 +11,15 @@ router.get("users/:id", getUserByID)
 router.post("/users", createUser)
 
 router.get("/products", getAllProducts )
-router.get("/products/product:id", getProductByID)
+router.get("/products/:productid", getProductByID)
 router.post("/products", createProduct )
 router.patch("/:productid/add-stock", addProductStock)
 router.put("/:productid/update", updateProduct)
 router.get("/proucts/stock", getStockLevels)
 
+router.get("/orders", getOrders)
 router.get("/orders/:id", getOrderByID)
-router.post("/orders" , createOrder)
+// router.post("/orders" , createOrder)
 router.get("/orders/completed" ,getCompletedOrders)
 router.get("/orders/reports", getSalesSummaryByProduct)
 router.get("/orders/reports/dates", getRevenueByDate)
