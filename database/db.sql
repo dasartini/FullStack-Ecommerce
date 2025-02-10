@@ -16,7 +16,9 @@ CREATE TABLE Users (
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
-  role VARCHAR(50) NOT NULL CHECK (role IN ('user', 'admin'))
+  role VARCHAR(50) NOT NULL CHECK (role IN ('user', 'admin')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
 
 -- Orders Table
@@ -55,4 +57,14 @@ CREATE TABLE Sales (
   customer_id INT DEFAULT NULL,     
   payment_status VARCHAR(20) DEFAULT 'Pending', 
   FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE CASCADE
+);
+-- Coffees Table
+CREATE TABLE Coffees (
+  id SERIAL PRIMARY KEY,
+  product_id INT NOT NULL,
+  region VARCHAR(255),
+  altitude VARCHAR(255),
+  variety VARCHAR(255),
+  process VARCHAR(255),
+  CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES Products (id) ON DELETE CASCADE
 );

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserByID, getUsers, createUser} from "../contollers/users.controllers.js"
+import { getUserByID, getUsers, createUser, loginUser} from "../contollers/users.controllers.js"
 import {getAllProducts,getProductByID, createProduct, addProductStock, updateProduct, getStockLevels, } from "../contollers/products.controllers.js"
 import {getOrderByID, makeCheckout, getCompletedOrders, getSalesSummaryByProduct, getRevenueByDate, getTopSellingProducts, getOrders} from "../contollers/orders.controllers.js"
 import {getCategories, createCategory} from "../contollers/categories.controllers.js"
@@ -9,6 +9,8 @@ const router = Router()
 router.get("/users", getUsers)
 router.get("users/:id", getUserByID)
 router.post("/users", createUser)
+router.post("/login/auth", loginUser);
+
 
 router.get("/products", getAllProducts )
 router.get("/products/:productid", getProductByID)
