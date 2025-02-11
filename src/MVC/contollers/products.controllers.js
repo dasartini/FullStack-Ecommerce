@@ -43,19 +43,51 @@ export const getAllProducts = async (req, res) => {
     }
   };
 
- export const addProductStock = async (req, res) => {
+  export const updateProduct = async (req, res) => {
     const { productId } = req.params;
-    const { additionalStock } = req.body;
-  
-    if (additionalStock <= 0) {
-      return res.status(400).json({ error: 'Additional stock must be greater than zero' });
-    }
-  
+    const { name, description, price, stock, image_url, category_id } = req.body;
+  console.log("inside the func")
     try {
-      const updatedProduct = await pool.query(
-        'UPDATE Products SET stock = stock + $1 WHERE id = $2 RETURNING *',
-        [additionalStock, productId]
-      );
+      if ((stock !== undefined && stock < 0) || (price !== undefined && price < 0)) {
+        return res.status(400).json({ error: 'Stock and price must be non-negative values' });
+      }
+  
+      const fields = [];
+      const values = [];
+      let query = `UPDATE Products SET `;
+  
+      if (name !== undefined) {
+        fields.push(`name = $${fields.length + 1}`);
+        values.push(name);
+      }
+      if (description !== undefined) {
+        fields.push(`description = $${fields.length + 1}`);
+        values.push(description);
+      }
+      if (price !== undefined) {
+        fields.push(`price = $${fields.length + 1}`);
+        values.push(price);
+      }
+      if (stock !== undefined) {
+        fields.push(`stock = $${fields.length + 1}`);
+        values.push(stock);
+      }
+      if (image_url !== undefined) {
+        fields.push(`image_url = $${fields.length + 1}`);
+        values.push(image_url);
+      }
+      if (category_id !== undefined) {
+        fields.push(`category_id = $${fields.length + 1}`);
+        values.push(category_id);
+      }
+  
+      if (fields.length === 0) {
+        return res.status(400).json({ error: 'No valid fields provided for update' });
+      }
+  
+      query += fields.join(', ') + ` WHERE id = $${fields.length + 1} RETURNING *`;
+      values.push(productId);
+      const updatedProduct = await pool.query(query, values);
   
       if (updatedProduct.rows.length === 0) {
         return res.status(404).json({ error: 'Product not found' });
@@ -63,36 +95,12 @@ export const getAllProducts = async (req, res) => {
   
       res.json(updatedProduct.rows[0]);
     } catch (err) {
+      console.log("failre")
+      console.log(err)
       res.status(500).json({ error: err.message });
     }
   };
-
-export const updateProduct = async (req, res) => {
-  const { productId } = req.params;
-  const { newStock, newPrice } = req.body;
-
-  try {
-    if (newStock < 0 || newPrice < 0) {
-      return res.status(400).json({ error: 'Stock and price must be non-negative values' });
-    }
-
-    const updatedProduct = await pool.query(
-      `UPDATE Products 
-       SET stock = COALESCE($1, stock), price = COALESCE($2, price) 
-       WHERE id = $3 
-       RETURNING *`,
-      [newStock, newPrice, productId]
-    );
-
-    if (updatedProduct.rows.length === 0) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    res.json(updatedProduct.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+  
 
 export const getStockLevels = async (req, res) => {
   try {

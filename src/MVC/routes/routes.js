@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getUserByID, getUsers, createUser, loginUser} from "../contollers/users.controllers.js"
-import {getAllProducts,getProductByID, createProduct, addProductStock, updateProduct, getStockLevels, } from "../contollers/products.controllers.js"
+import {getAllProducts,getProductByID, createProduct, updateProduct, getStockLevels, } from "../contollers/products.controllers.js"
 import {getOrderByID, makeCheckout, getCompletedOrders, getSalesSummaryByProduct, getRevenueByDate, getTopSellingProducts, getOrders} from "../contollers/orders.controllers.js"
 import {getCategories, createCategory} from "../contollers/categories.controllers.js"
 
@@ -15,8 +15,7 @@ router.post("/login/auth", loginUser);
 router.get("/products", getAllProducts )
 router.get("/products/:productid", getProductByID)
 router.post("/products", createProduct )
-router.patch("/:productid/add-stock", addProductStock)
-router.put("/:productid/update", updateProduct)
+router.put("/products/:productId", updateProduct);
 router.get("/proucts/stock", getStockLevels)
 
 router.get("/orders", getOrders)
