@@ -70,6 +70,7 @@ export const loginUser = async (req, res) => {
     )
     res.status(200).json({ message: "Login successful", token, user: { name: user.name, role: user.role } });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 };
