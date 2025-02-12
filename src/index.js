@@ -1,5 +1,4 @@
 console.log("Starting....")
-import  {PORT}  from "./config.js"
 import express from "express"
 import userRoutes from "./MVC/routes/routes.js"
 import morgan from "morgan"
@@ -9,6 +8,6 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(userRoutes)
 
-app.listen(PORT)
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
-console.log("listening on port", PORT)
