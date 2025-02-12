@@ -5,7 +5,7 @@ import {
   DB_PASSWORD,
   PORT,
   DB_USER,
-  DB_URL
+  DATABASE_URL
 } from "./config.js";
  
 
@@ -19,7 +19,7 @@ import {
 
 
 export const pool = new pg.Pool({
-  connectionString: DB_URL,
+  connectionString: DATABASE_URL,
   ssl: {
     rejectUnauthorized: false, 
   },
