@@ -19,7 +19,7 @@ import {
 
 
 export const pool = new pg.Pool({
-  connectionString: DATABASE_URL,
+  connectionString: DB_URL,
   ssl: {
     rejectUnauthorized: false, 
   },
