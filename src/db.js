@@ -6,4 +6,6 @@ export const pool = new pg.Pool({
   ssl: {
     rejectUnauthorized: false, 
   },
+  host: new URL(DATABASE_URL).hostname,
+  port: new URL(DATABASE_URL).port,
 });
