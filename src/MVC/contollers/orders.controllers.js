@@ -14,13 +14,15 @@ export const getOrderByID =  async (req, res) => {
   const orderId = req.params.id;
   try {
     const order = await pool.query(
-      `SELECT Orders.id, Orders.user_id, Orders.total_price, Orders.created_at, 
+      `SELECT Orders.id, Orders.total_price, Orders.created_at, 
               json_agg(
                 json_build_object(
                   'product_id', Order_Items.product_id,
                   'product_name', Products.name,
                   'quantity', Order_Items.quantity,
-                  'price', Order_Items.price
+                  'price', Order_Items.price,
+                  'grind', Order_items.grind,
+                  'size', Order_items.size
                 )
               ) AS items
        FROM Orders
@@ -41,40 +43,6 @@ export const getOrderByID =  async (req, res) => {
   }
 };
 
-// export const createOrder =  async (req, res) => {
-//   const { user_id, items } = req.body;
-
-//   try {
-//     let totalPrice = 0;
-//     for (let item of items) {
-//       const product = await pool.query(
-//         'SELECT price FROM Products WHERE id = $1',
-//         [item.product_id]
-//       );
-//       totalPrice += product.rows[0].price * item.quantity;
-//     }
-
-//     const newOrder = await pool.query(
-//       `INSERT INTO Orders (user_id, total_price) 
-//        VALUES ($1, $2) RETURNING *`,
-//       [user_id, totalPrice]
-//     );
-
-//     const orderId = newOrder.rows[0].id;
-
-//     for (let item of items) {
-//       await pool.query(
-//         `INSERT INTO Order_Items (order_id, product_id, quantity, price) 
-//          VALUES ($1, $2, $3, $4)`,
-//         [orderId, item.product_id, item.quantity, item.price]
-//       );
-//     }
-
-//     res.status(201).json({ orderId, totalPrice });
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
 
 
 export const makeCheckout = async (req, res) => {
@@ -89,7 +57,6 @@ export const makeCheckout = async (req, res) => {
   try {
     await client.query("BEGIN");
 
-    // Insert new order with additional columns
     const orderResult = await client.query(
       `INSERT INTO Orders (total_price, customer_name, payment_status, transaction_id) 
        VALUES ($1, $2, $3, $4) RETURNING id`,
@@ -98,15 +65,13 @@ export const makeCheckout = async (req, res) => {
     const orderId = orderResult.rows[0].id;
 
     for (const item of items) {
-      const { id, quantity, price } = item;
+      const { id, quantity, price, grind, size } = item;
 
-      // Insert into Order_Items
       await client.query(
-        "INSERT INTO Order_Items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
-        [orderId, id, quantity, price]
+        "INSERT INTO Order_Items (order_id, product_id, quantity, price, grind, size) VALUES ($1, $2, $3, $4, $5, $6)",
+        [orderId, id, quantity, price, grind, size]
       );
 
-      // Update stock
       const stockUpdate = await client.query(
         "UPDATE Products SET stock = stock - $1 WHERE id = $2 AND stock >= $1 RETURNING stock",
         [quantity, id]
@@ -117,7 +82,6 @@ export const makeCheckout = async (req, res) => {
       }
     }
 
-    // Commit transaction
     await client.query("COMMIT");
 
     res.status(200).json({ message: "Order placed successfully", orderId });
