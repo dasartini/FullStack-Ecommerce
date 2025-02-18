@@ -8,7 +8,6 @@ import { DB_PORT } from "./config.js"
 import cors from "cors"
 import { pool } from "./db.js"
 
-console.log(pool)
 const app = express()
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
