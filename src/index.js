@@ -6,10 +6,14 @@ import userRoutes from "./MVC/routes/routes.js"
 import morgan from "morgan"
 import { DB_PORT } from "./config.js"
 import cors from "cors"
+import { pool } from "./db.js"
 
+console.log(pool)
 const app = express()
 
-const allowedOrigins = ["https://cafe-tero.netlify.app"];
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ["https://cafe-tero.netlify.app"]
+  : ["http://localhost:3000", "http://localhost:5000"];
 app.use(cors({ origin: allowedOrigins }));
 app.use(morgan('dev'))
 app.use(express.json())
