@@ -7,6 +7,8 @@ CREATE TABLE Products (
   stock INT NOT NULL CHECK (stock >= 0),
   image_url TEXT,
   category_id INT NOT NULL,
+  isCoffee BOOLEAN,
+  details JSONB DEFAULT "{}",
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Categories (id) ON DELETE CASCADE
 );
 
