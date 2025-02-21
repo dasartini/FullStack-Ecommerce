@@ -3,7 +3,8 @@ import { getUserByID, getUsers, createUser, loginUser} from "../contollers/users
 import {getAllProducts,getProductByID, createProduct, updateProduct, getStockLevels, } from "../contollers/products.controllers.js"
 import {getOrderByID, makeCheckout, getCompletedOrders, getSalesSummaryByProduct, getRevenueByDate, getTopSellingProducts, getOrders} from "../contollers/orders.controllers.js"
 import {getCategories, createCategory} from "../contollers/categories.controllers.js"
-
+import { uploadImage } from "../contollers/image.controllers.js";
+import { upload } from "../../multer.js";
 const router = Router()
 
 router.get("/users", getUsers)
@@ -31,4 +32,6 @@ router.post("/checkout", makeCheckout)
 router.get("/categories", getCategories)
 router.post("/categories", createCategory )
 
+
+router.post("/upload-image/:id", upload.single('image'), uploadImage);
 export default router

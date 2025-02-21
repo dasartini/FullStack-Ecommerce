@@ -16,6 +16,7 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
 app.use(cors({ origin: allowedOrigins }));
 app.use(morgan('dev'))
 app.use(express.json())
+app.use("/uploads", express.static('uploads'))
 app.use(userRoutes)
 
 const PORT = DB_PORT
