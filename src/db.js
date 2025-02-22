@@ -1,14 +1,3 @@
-// import pg from "pg";
-// import { DATABASE_URL } from "./config.js";
-
-// export const pool = new pg.Pool({
-//   connectionString: DATABASE_URL,
-//   ssl: {
-//     rejectUnauthorized: false, 
-//   },
-//   host: new URL(DATABASE_URL).hostname,
-//   port: new URL(DATABASE_URL).port,
-// });
 import pg from "pg";
 import { DATABASE_URL, DB_USER, DB_HOST, DB_PASSWORD, DB_DATABASE, DB_PORT } from "./config.js";
 

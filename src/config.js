@@ -1,9 +1,3 @@
-// import 'dotenv/config';
-
-// export const DATABASE_URL = process.env.DATABASE_URL;
-
-
-// export const DB_PORT = process.env.DB_PORT|| 5000;
 
 import dotenv from 'dotenv';
 import path from 'path';
