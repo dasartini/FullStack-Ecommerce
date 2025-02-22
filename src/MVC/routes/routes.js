@@ -21,7 +21,6 @@ router.get("/proucts/stock", getStockLevels)
 
 router.get("/orders", getOrders)
 router.get("/orders/:id", getOrderByID)
-// router.post("/orders" , createOrder)
 router.get("/orders/completed" ,getCompletedOrders)
 router.get("/orders/reports", getSalesSummaryByProduct)
 router.get("/orders/reports/dates", getRevenueByDate)

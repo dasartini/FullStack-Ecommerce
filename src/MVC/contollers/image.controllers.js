@@ -2,7 +2,6 @@ import { pool } from '../../db.js';
 
 export const uploadImage = async (req, res) => {
   const { id } = req.params;
-  console.log("QWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWww",id)
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
@@ -11,7 +10,7 @@ export const uploadImage = async (req, res) => {
   
   try {
     const result = await pool.query(
-      'UPDATE your_table SET image_url = $1 WHERE id = $2 RETURNING *',
+      'UPDATE Products SET image_url = $1 WHERE id = $2 RETURNING *',
       [imageUrl, id]
     );
 
