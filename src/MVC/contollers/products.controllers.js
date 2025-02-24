@@ -60,7 +60,6 @@ export const getAllProducts = async (req, res) => {
   
         const parsedDetails = details ? JSON.parse(details) : {};
   
-        // Ensure image URL matches the full format
         const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
          
   
