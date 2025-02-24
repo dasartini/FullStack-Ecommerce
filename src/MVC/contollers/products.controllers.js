@@ -1,4 +1,5 @@
 import { pool } from "../../db.js"
+import { upload } from "../../multer.js";
 
 export const getAllProducts = async (req, res) => {
 
@@ -28,20 +29,56 @@ export const getAllProducts = async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   };
+  // export const createProduct = async (req, res) => {
+  //   const { name, description, price, stock, image_url, category_id, isCoffee, details } = req.body;
+  //   try {
+  //     const newProduct = await pool.query(
+  //       `INSERT INTO Products (name, description, price, stock, image_url, category_id, isCoffee, details) 
+  //        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+  //       [name, description, price, stock, image_url, category_id, isCoffee, JSON.stringify(details)
+  //       ]
+  //     );
+  //     res.status(201).json(newProduct.rows[0]);
+  //   } catch (err) {
+  //     console.log(err)
+  //     res.status(500).json({ error: err.message });
+  //   }
+  // };
+
   export const createProduct = async (req, res) => {
-    const { name, description, price, stock, image_url, category_id, isCoffe, details } = req.body;
     try {
-      const newProduct = await pool.query(
-        `INSERT INTO Products (name, description, price, stock, image_url, category_id) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 8$) RETURNING *`,
-        [name, description, price, stock, image_url, category_id]
-      );
-      res.status(201).json(newProduct.rows[0]);
-    } catch (err) {
-      console.log(err)
-      res.status(500).json({ error: err.message });
+      upload.single("image")(req, res, async function (err) {
+        if (err) {
+          return res.status(400).json({ error: err.message });
+        }
+  
+        const { name, price, stock, description, category_id, isCoffee, details } = req.body;
+  
+        if (!name || !price || !stock || !category_id) {
+          return res.status(400).json({ error: "Missing required fields" });
+        }
+  
+        const parsedDetails = details ? JSON.parse(details) : {};
+  
+        // Ensure image URL matches the full format
+        const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+         
+  
+        const result = await pool.query(
+          `INSERT INTO products (name, price, stock, description, category_id, isCoffee, details, image_url)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+          [name, price, stock, description, category_id, isCoffee, parsedDetails, imageUrl]
+        );
+  
+        res.status(201).json({ message: "Product created", product: result.rows[0] });
+      });
+    } catch (error) {
+      console.log("there was this;", error);
+      console.error("Error creating product:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   };
+  
 
   export const updateProduct = async (req, res) => {
     const { productId } = req.params;
