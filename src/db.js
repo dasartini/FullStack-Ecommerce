@@ -2,7 +2,7 @@ import pg from "pg";
 import { DATABASE_URL, DB_USER, DB_HOST, DB_PASSWORD, DB_DATABASE, DB_PORT } from "./config.js";
 
 const isProd = process.env.NODE_ENV === 'production';
-
+pg.types.setTypeParser(pg.types.builtins.NUMERIC, (val) => parseFloat(val));
 export const pool = isProd
   ? new pg.Pool({
       connectionString: DATABASE_URL,
