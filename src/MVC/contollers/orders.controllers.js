@@ -6,7 +6,6 @@ export const getOrders = async (req, res) => {
     
     res.json(users.rows);
   } catch (err) {
-    console.log(err)
     res.status(500).json({ error: err.message });
   }
 }

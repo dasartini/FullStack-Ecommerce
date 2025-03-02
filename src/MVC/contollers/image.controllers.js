@@ -20,7 +20,6 @@ export const uploadImage = async (req, res) => {
 
     res.json({ success: true, updatedRecord: result.rows[0] });
   } catch (error) {
-    console.log(error)
     console.error('Error updating image URL:', error);
     res.status(500).json({ error: 'Database update failed' });
   }

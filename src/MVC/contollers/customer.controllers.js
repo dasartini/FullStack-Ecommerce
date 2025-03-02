@@ -2,9 +2,7 @@ import { pool } from "../../db.js";
 
 export const getCustomerDetails = async (req, res) => {
     const { order_id } = req.params;
-  console.log(order_id)
     try {
-        console.log("here")
       const result = await pool.query(
         "SELECT * FROM CustomerDetails WHERE order_id = $1",
         [order_id]
@@ -16,7 +14,6 @@ export const getCustomerDetails = async (req, res) => {
   
       res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.log(error)
       console.error("Error retrieving customer details:", error);
       res.status(500).json({ error: "Internal server error" });
     }
