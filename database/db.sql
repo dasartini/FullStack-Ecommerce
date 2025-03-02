@@ -33,7 +33,17 @@ CREATE TABLE Orders (
   customer_name VARCHAR(100),
 transaction_id VARCHAR(255);
 );
-
+--Customer Details Table
+CREATE TABLE CustomerDetails (
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES Orders(id) ON DELETE CASCADE, 
+  address_line_1 VARCHAR(255) NOT NULL,
+  address_line_2 VARCHAR(255),
+  admin_area_2 VARCHAR(100),
+  admin_area_1 VARCHAR(100),
+  postal_code VARCHAR(20) NOT NULL,
+  email VARCHAR(255) NOT NULL
+);
 -- Order_Items Table
 CREATE TABLE Order_Items (
   order_id INT NOT NULL,
