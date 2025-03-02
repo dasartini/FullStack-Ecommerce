@@ -79,7 +79,7 @@ export const makeCheckout = async (req, res) => {
       );
 
       if (stockUpdate.rowCount === 0) {
-        throw new Error(`Insufficient stock for product with ID ${product_id}`);
+        throw new Error(`Insufficient stock for product with ID ${id}`);
       }
     }
 
