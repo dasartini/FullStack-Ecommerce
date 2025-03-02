@@ -25,26 +25,9 @@ export const getAllProducts = async (req, res) => {
       }
       res.json(product.rows[0]);
     } catch (err) {
-      console.log()
       res.status(500).json({ error: err.message });
     }
   };
-  // export const createProduct = async (req, res) => {
-  //   const { name, description, price, stock, image_url, category_id, isCoffee, details } = req.body;
-  //   try {
-  //     const newProduct = await pool.query(
-  //       `INSERT INTO Products (name, description, price, stock, image_url, category_id, isCoffee, details) 
-  //        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-  //       [name, description, price, stock, image_url, category_id, isCoffee, JSON.stringify(details)
-  //       ]
-  //     );
-  //     res.status(201).json(newProduct.rows[0]);
-  //   } catch (err) {
-  //     console.log(err)
-  //     res.status(500).json({ error: err.message });
-  //   }
-  // };
-
   export const createProduct = async (req, res) => {
     try {
       upload.single("image")(req, res, async function (err) {
@@ -72,7 +55,6 @@ export const getAllProducts = async (req, res) => {
         res.status(201).json({ message: "Product created", product: result.rows[0] });
       });
     } catch (error) {
-      console.log("there was this;", error);
       console.error("Error creating product:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -139,7 +121,6 @@ export const getAllProducts = async (req, res) => {
 
         res.json(updatedProduct.rows[0]);
     } catch (err) {
-        console.log("Failure:", err);
         res.status(500).json({ error: err.message });
     }
 };
