@@ -5,6 +5,7 @@ import {getOrderByID, makeCheckout, getCompletedOrders, getSalesSummaryByProduct
 import {getCategories, createCategory} from "../contollers/categories.controllers.js"
 import { uploadImage } from "../contollers/image.controllers.js";
 import { upload, handleUploadErrors } from "../../multer.js";
+import { getCustomerDetails, saveCustomerDetails } from "../contollers/customer.controllers.js";
 const router = Router()
 
 router.get("/users", getUsers)
@@ -27,6 +28,8 @@ router.get("/orders/reports/dates", getRevenueByDate)
 router.get("/orders/reports/top-selling-products",getTopSellingProducts )
 router.post("/checkout", makeCheckout)
 
+router.get("/customer-details/:order_id", getCustomerDetails);
+router.post("/customer-details/:order_id", saveCustomerDetails);
 
 router.get("/categories", getCategories)
 router.post("/categories", createCategory )
