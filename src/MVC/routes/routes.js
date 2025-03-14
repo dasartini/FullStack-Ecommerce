@@ -3,6 +3,7 @@ import { getUserByID, getUsers, createUser, loginUser} from "../contollers/users
 import {getAllProducts,getProductByID, createProduct, updateProduct, getStockLevels, } from "../contollers/products.controllers.js"
 import {getOrderByID, makeCheckout, getCompletedOrders, getSalesSummaryByProduct, getRevenueByDate, getTopSellingProducts, getOrders} from "../contollers/orders.controllers.js"
 import {getCategories, createCategory} from "../contollers/categories.controllers.js"
+import { contactUs } from "../contollers/contact.controllers.js";
 import { uploadImage } from "../contollers/image.controllers.js";
 import { upload, handleUploadErrors } from "../../multer.js";
 import { getCustomerDetails, saveCustomerDetails } from "../contollers/customer.controllers.js";
@@ -36,4 +37,7 @@ router.post("/categories", createCategory )
 
 
 router.post("/upload-image/:id", upload.single('image'), handleUploadErrors, uploadImage);
+
+router.post("/contact", contactUs )
+
 export default router

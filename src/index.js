@@ -8,8 +8,8 @@ import cors from "cors"
 const app = express()
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ["https://cafe-tero.netlify.app"]
-  : ["http://localhost:3000", "http://localhost:5000"];
+  ? [process.env.PRODUCTION_HOST]
+  : [process.env.LOCALHOST1, process.env.LOCALHOST2];
 app.use(cors({ origin: allowedOrigins }));
 app.use(morgan('dev'))
 app.use(express.json())
