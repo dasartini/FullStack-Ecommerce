@@ -7,6 +7,7 @@ import { contactUs } from "../contollers/contact.controllers.js";
 import { uploadImage } from "../contollers/image.controllers.js";
 import { upload, handleUploadErrors } from "../../multer.js";
 import { getCustomerDetails, saveCustomerDetails } from "../contollers/customer.controllers.js";
+import { uploadImageSupa } from "../../supabase.js";
 const router = Router()
 
 router.get("/users", getUsers)
@@ -37,6 +38,8 @@ router.post("/categories", createCategory )
 
 
 router.post("/upload-image/:id", upload.single('image'), handleUploadErrors, uploadImage);
+//supabase
+router.post("/uploadImageSupa", upload.single('image'), uploadImageSupa )
 
 router.post("/contact", contactUs )
 
