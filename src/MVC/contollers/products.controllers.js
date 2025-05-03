@@ -125,7 +125,24 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
-  
+
+export const deleteProductByID = async (req, res) => {
+  const productId = req.params.productid;
+
+  try {
+    // Check if the product exists
+    const product = await pool.query('SELECT id FROM Products WHERE id = $1', [productId]);
+    if (product.rows.length === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    // Delete the product
+    await pool.query('DELETE FROM Products WHERE id = $1', [productId]);
+    res.json({ message: 'Product deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 export const getStockLevels = async (req, res) => {
   try {
