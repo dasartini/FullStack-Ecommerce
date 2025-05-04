@@ -7,7 +7,9 @@ export const getAllProducts = async (req, res) => {
       const products = await pool.query(
         `SELECT Products.*, Categories.category_name 
          FROM Products
-         JOIN Categories ON Products.category_id = Categories.id`
+         JOIN Categories ON Products.category_id = Categories.id
+         WHERE Products.is_deleted = false
+         `
       );
       res.json(products.rows);
     } catch (err) {
@@ -19,7 +21,14 @@ export const getAllProducts = async (req, res) => {
   
     const productId = req.params.productid;
     try {
-      const product = await pool.query('SELECT id, name, description, price, stock, image_url, category_id, isCoffee, details FROM Products WHERE id = $1', [productId]);
+      const product = await pool.query(
+        `SELECT id, name, description, price, stock, image_url, 
+         category_id, isCoffee, details 
+         FROM Products 
+         WHERE id = $1`,
+      // may be not needed AND is_deleted = false
+        [productId]
+      );
       if (product.rows.length === 0) {
         return res.status(404).json({ error: 'Product not found' });
       }
@@ -66,6 +75,14 @@ export const getAllProducts = async (req, res) => {
     const { name, description, price, stock, image_url, category_id, isCoffee, details } = req.body;
 
     try {
+      const checkProduct = await pool.query(
+        'SELECT id FROM Products WHERE id = $1',
+        [productId]
+      );
+      if (checkProduct.rows.length === 0) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
         if ((stock !== undefined && stock < 0) || (price !== undefined && price < 0)) {
             return res.status(400).json({ error: "Stock and price must be non-negative values" });
         }
@@ -130,24 +147,23 @@ export const deleteProductByID = async (req, res) => {
   const productId = req.params.productid;
 
   try {
-    // Check if the product exists
-    const product = await pool.query('SELECT id FROM Products WHERE id = $1', [productId]);
-    if (product.rows.length === 0) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    // Delete the product
-    await pool.query('DELETE FROM Products WHERE id = $1', [productId]);
-    res.json({ message: 'Product deleted successfully' });
+    // Soft delete the product
+    await pool.query(
+      'UPDATE Products SET is_deleted = true WHERE id = $1',
+      [productId]
+    );
+    
+    res.json({ message: 'Product marked as deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+
 export const getStockLevels = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, stock FROM Products ORDER BY stock ASC"
+      "SELECT id, name, stock FROM Products WHERE is_deleted = false ORDER BY stock ASC"
     );
     res.status(200).json(result.rows);
   } catch (err) {

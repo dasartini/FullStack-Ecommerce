@@ -10,6 +10,7 @@ CREATE TABLE Products (
   isCoffee BOOLEAN,
   details JSONB DEFAULT "{}",
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES Categories (id) ON DELETE CASCADE
+  is_deleted BOOLEAN DEFAULT false
 );
 
 -- Users Table
